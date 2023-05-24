@@ -13,6 +13,16 @@ selectElement.addEventListener("change", (event) => {
         initialSort:[
             {column:"periodStartedAt", dir:"desc"}, //sort by this first
         ],
+        groupHeader: function (value, count, data, group) {
+            let totalEarnings = 0;
+            data.forEach((item) => {
+                if (item.amount > 0) {
+                    totalEarnings += item.amount;
+                }
+            });
+    
+            return formatDate(new Date(Number(value))) + `$${parseFloat(totalEarnings.toPrecision(3)).toFixed(2)}`;
+        },
         columns: [
             {title:"Date", field:"periodStartedAt", hozAlign:"center", sorter:"number", formatter: function (cell, formatterParams, onRendered) {
                 if (cell.getValue()) {
