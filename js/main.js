@@ -5,7 +5,6 @@ selectElement.addEventListener("change", (event) => {
     .then((response) => response.json())
     .then((json) => json.map(({zippedStats, ...rest}) => 
             zippedStats.map(attribute => ({...rest, ...attribute}))).flat())
-    .then(parse => {console.log(parse); return parse;})
     .then(parsed => new Tabulator("#example-table", {
         height:311,
         layout:"fitColumns",
