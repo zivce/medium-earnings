@@ -61,6 +61,13 @@ selectElement.addEventListener("change", (event) => {
 
 });
 
+function formatDate(date) {
+    return date.getFullYear() + "-" +
+        ('0' + (date.getMonth() + 1)).slice(-2) + "-" +
+        ('0' + date.getDate()).slice(-2);
+}
+
+
 const formatHumanSecondsDuration = function (cell) {
     duration = luxon.Duration.fromMillis(cell.getValue() * 1000).shiftTo('days', 'hours', 'minutes', 'seconds');
 
