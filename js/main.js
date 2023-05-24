@@ -32,7 +32,7 @@ selectElement.addEventListener("change", (event) => {
                     return convertedDate;
                 }}
             },
-            {title:"Title", field:"title"},
+            {title:"Title", field:"title", editor:"input", headerFilter:true},
             {title:"Name", field:"name"},
             {title:"Link", field:"link"},
             {title:"Views", field:"views", topCalc: "sum"},
