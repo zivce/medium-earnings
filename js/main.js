@@ -14,7 +14,12 @@ selectElement.addEventListener("change", (event) => {
             {column:"periodStartedAt", dir:"desc"}, //sort by this first
         ],
         columns: [
-            {title:"Date", field:"periodStartedAt", hozAlign:"center", sorter:"date",  sorterParams:{format:"dd-MM-y"}},
+            {title:"Date", field:"periodStartedAt", hozAlign:"center", sorter:"number", formatter: function (cell, formatterParams, onRendered) {
+                if (cell.getValue()) {
+                    let convertedDate = formatDate(new Date(Number(cell.getValue())));
+                    return convertedDate;
+                }}
+            },
             {title:"Title", field:"title"},
             {title:"Name", field:"name"},
             {title:"Link", field:"link"},
