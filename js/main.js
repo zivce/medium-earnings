@@ -10,6 +10,8 @@ selectElement.addEventListener("change", (event) => {
         initialFilter : [
             {field:"amount", type:">", value:"0"}
         ],
+        groupToggleElement:"header",
+        groupStartOpen:false,
         layout:"fitColumns",
         groupBy: "periodStartedAt",
         initialSort:[
@@ -23,7 +25,7 @@ selectElement.addEventListener("change", (event) => {
                 }
             });
     
-            return formatDate(new Date(Number(value))) + `- $${parseFloat(totalEarnings.toPrecision(3)).toFixed(2)}`;
+            return formatDate(new Date(Number(value))) + ` - $${parseFloat(totalEarnings.toPrecision(3)).toFixed(2)}`;
         },
         columns: [
             {title:"Date", field:"periodStartedAt", hozAlign:"center", sorter:"number", formatter: function (cell, formatterParams, onRendered) {
