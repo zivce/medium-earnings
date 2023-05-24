@@ -7,6 +7,9 @@ selectElement.addEventListener("change", (event) => {
             zippedStats.map(attribute => ({...rest, ...attribute}))).flat())
     .then(parsed => new Tabulator("#example-table", {
         height:311,
+        initialFilter : [
+            {field:"amount", type:">", value:"0"}
+        ],
         layout:"fitColumns",
         groupBy: "periodStartedAt",
         initialSort:[
@@ -49,6 +52,7 @@ selectElement.addEventListener("change", (event) => {
                 formatter: formatHumanSecondsDuration,},
             {title: "Amount", field:"amount", topCalc: "sum", topCalcParams: { precision: 2 },
                 topCalcFormatter: "money",
+                editor:"input", headerFilter:true,
                 topCalcFormatterParams: {
                     decimal: ".",
                     thousand: ",",
