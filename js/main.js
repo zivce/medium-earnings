@@ -21,7 +21,7 @@ selectElement.addEventListener("change", (event) => {
                 }
             });
     
-            return formatDate(new Date(Number(value))) + `$${parseFloat(totalEarnings.toPrecision(3)).toFixed(2)}`;
+            return formatDate(new Date(Number(value))) + `- $${parseFloat(totalEarnings.toPrecision(3)).toFixed(2)}`;
         },
         columns: [
             {title:"Date", field:"periodStartedAt", hozAlign:"center", sorter:"number", formatter: function (cell, formatterParams, onRendered) {
