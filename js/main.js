@@ -29,7 +29,8 @@ selectElement.addEventListener("change", (event) => {
                 if (cell.getValue()) {
                     let convertedDate = formatDate(new Date(Number(cell.getValue())));
                     return convertedDate;
-                }}
+                }},
+                headerFilter:dateFilterEditor, headerFilterFunc:dateFilterFunction
             },
             {title:"Title", field:"title", editor:"input", headerFilter:true},
             {title:"Name", field:"name"},
@@ -68,52 +69,133 @@ selectElement.addEventListener("change", (event) => {
             
         ],
         data: parsed
-    }))
-    //Define variables for input elements
-    var fieldEl = document.getElementById("filter-field");
-    var typeEl = document.getElementById("filter-type");
-    var valueEl = document.getElementById("filter-value");
+    })).then(table => {
+        //Define variables for input elements
+        var fieldEl = document.getElementById("filter-field");
+        var typeEl = document.getElementById("filter-type");
+        var valueEl = document.getElementById("filter-value");
 
-    //Custom filter example
-    function customFilter(data){
-        return data.car && data.rating < 3;
-    }
+        //Custom filter example
+        function customFilter(data) {
+            return data.car && data.rating < 3;
+        }
 
-    //Trigger setFilter function with correct parameters
-    function updateFilter(){
-    var filterVal = fieldEl.options[fieldEl.selectedIndex].value;
-    var typeVal = typeEl.options[typeEl.selectedIndex].value;
+        //Trigger setFilter function with correct parameters
+        function updateFilter() {
+            var filterVal = fieldEl.options[fieldEl.selectedIndex].value;
+            var typeVal = typeEl.options[typeEl.selectedIndex].value;
 
-    var filter = filterVal == "function" ? customFilter : filterVal;
+            var filter = filterVal == "function" ? customFilter : filterVal;
 
-    if(filterVal == "function" ){
-        typeEl.disabled = true;
-        valueEl.disabled = true;
-    }else{
-        typeEl.disabled = false;
-        valueEl.disabled = false;
-    }
+            if (filterVal == "function" ) {
+                typeEl.disabled = true;
+                valueEl.disabled = true;
+            } else {
+                typeEl.disabled = false;
+                valueEl.disabled = false;
+            }
 
-    if(filterVal){
-        table.setFilter(filter,typeVal, valueEl.value);
-    }
-    }
+            if (filterVal) {
+                table.setFilter(filter,typeVal, valueEl.value);
+            }
+        }
 
-    //Update filters on value change
-    document.getElementById("filter-field").addEventListener("change", updateFilter);
-    document.getElementById("filter-type").addEventListener("change", updateFilter);
-    document.getElementById("filter-value").addEventListener("keyup", updateFilter);
+        //Update filters on value change
+        document.getElementById("filter-field").addEventListener("change", updateFilter);
+        document.getElementById("filter-type").addEventListener("change", updateFilter);
+        document.getElementById("filter-value").addEventListener("keyup", updateFilter);
 
-    //Clear filters on "Clear Filters" button click
-    document.getElementById("filter-clear").addEventListener("click", function(){
-    fieldEl.value = "";
-    typeEl.value = "=";
-    valueEl.value = "";
+        //Clear filters on "Clear Filters" button click
+        document.getElementById("filter-clear").addEventListener("click", function() {
+            fieldEl.value = "";
+            typeEl.value = "=";
+            valueEl.value = "";
 
-    table.clearFilter();
+            table.clearFilter();
+        });
+
+    })
+   
+});
+//custom header filter
+var dateFilterEditor = function(cell, onRendered, success, cancel, editorParams){
+
+	var container = document.createElement("span")
+	//create and style input
+	var domString = "<input type='date' placeholder='Start'/>&nbsp;<input type='date' placeholder='End'/>";
+    container.innerHTML = domString;
+
+	var inputs = container.getElementsByTagName("input");
+
+
+	Array.from(inputs).forEach(elem => {
+        elem.setAttribute("style", "padding:4px; width:50%;box-sizing:border-box")
+    });
+    
+    inputs[0].addEventListener('change', function(e){
+        success(buildDateString(e.target.value, inputs[1].value));
+    });
+    inputs[0].addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){
+            success(buildDateString(e.target.value, inputs[1].value));
+        }
+
+        if(e.key == "Escape"){
+            cancel();
+        }        
+    });
+	inputs[1].addEventListener('change', function(e){
+        success(buildDateString(inputs[0].value, e.target.value,));
+    });
+    inputs[1].addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){
+            success(buildDateString(inputs[0].value, e.target.value));
+        }
+
+        if(e.key == "Escape"){
+            cancel();
+        }        
     });
 
-});
+	return container;
+}
+
+//custom filter function
+function dateFilterFunction(headerValue, rowValue, rowData, filterParams){
+    //headerValue - the value of the header filter element
+    //rowValue - the value of the column in this row
+    //rowData - the data for the row being filtered
+    //filterParams - params object passed to the headerFilterFuncParams property
+
+   	var format = filterParams.format || "y-LL-dd";
+   
+ 
+    var start = luxon.DateTime.fromFormat(headerValue.start, format);
+   	var end = luxon.DateTime.fromFormat(headerValue.end, format);
+   	if(rowValue){
+   		if(start.isValid){
+   			if(end.isValid){
+   				return rowValue >= start && rowValue <= end;
+   			} else {
+   				return rowValue >= start;
+   			}
+   		} else {
+   			if(end.isValid){
+   				return rowValue <= end;
+   			}
+   		}
+   	}
+
+    return false; //must return a boolean, true if it passes the filter.
+}
+
+
+function buildDateString(start, end){
+    return {
+        start,
+        end,
+    };
+}
 
 function formatDate(date) {
     return date.getFullYear() + "-" +
