@@ -1,15 +1,17 @@
-const selectElement = document.querySelector("#dataset-url");
+const selectElement = document.querySelector("#dataset-url-submit");
 
-selectElement.addEventListener("change", (event) => {
-    fetch(`${event.target.value}`)
+selectElement.addEventListener("click", (event) => {
+    const datasetUrlInput = document.querySelector("#dataset-url");
+
+    fetch(`${datasetUrlInput.value}`)
     .then((response) => response.json())
     .then((json) => json.map(({zippedStats, ...rest}) => 
             zippedStats.map(attribute => ({...rest, ...attribute}))).flat())
     .then(parsed => new Tabulator("#example-table", {
-        height:311,
+        height:"1000",
+        layout:"fitDataTable",
         groupToggleElement:"header",
-        groupStartOpen:false,
-        layout:"fitColumns",
+        groupStartOpen:true,
         groupBy: "periodStartedAt",
         initialSort:[
             {column:"periodStartedAt", dir:"desc"}, //sort by this first
@@ -25,17 +27,23 @@ selectElement.addEventListener("change", (event) => {
             return formatDate(new Date(Number(value))) + ` - $${parseFloat(totalEarnings.toPrecision(3)).toFixed(2)}`;
         },
         columns: [
-            {title:"Date", field:"periodStartedAt", hozAlign:"center", sorter:"number", formatter: function (cell, formatterParams, onRendered) {
+            {title:"Date", width:200, field:"periodStartedAt", hozAlign:"center", sorter:"number", formatter: function (cell, formatterParams, onRendered) {
                 if (cell.getValue()) {
                     let convertedDate = formatDate(new Date(Number(cell.getValue())));
                     return convertedDate;
                 }},
                 headerFilter:dateFilterEditor, headerFilterFunc:dateFilterFunction
             },
+        
             {title:"Title", field:"title", editor:"input", headerFilter:true},
-            {title:"Name", field:"name"},
-            {title:"Link", field:"link"},
+            {title:"Link", field:"link",  formatter: function (cell, formatterParams, onRendered) {
+                return `<a class="tableLink" href="${ cell.getValue()}" target="_blank" rel="noopener noreferrer" title="Medium stats page">Go to stats</a>`;
+            },},
             {title:"Views", field:"views", topCalc: "sum"},
+            { title:"External views", sorter:"number", field:"external_views",topCalc: "sum", align: "right", mutator:function(value, data) {
+                    return data.views - data.internalReferrerViews;
+                } 
+            },
             {title: "Internal views", field:"internalReferrerViews", topCalc: "sum"},
             {title: "Member time reading (s)", field:"memberTtr",
                 topCalc: function (values, data, calcParams) {
@@ -75,29 +83,13 @@ selectElement.addEventListener("change", (event) => {
         var typeEl = document.getElementById("filter-type");
         var valueEl = document.getElementById("filter-value");
 
-        //Custom filter example
-        function customFilter(data) {
-            return data.car && data.rating < 3;
-        }
 
         //Trigger setFilter function with correct parameters
         function updateFilter() {
             var filterVal = fieldEl.options[fieldEl.selectedIndex].value;
             var typeVal = typeEl.options[typeEl.selectedIndex].value;
 
-            var filter = filterVal == "function" ? customFilter : filterVal;
-
-            if (filterVal == "function" ) {
-                typeEl.disabled = true;
-                valueEl.disabled = true;
-            } else {
-                typeEl.disabled = false;
-                valueEl.disabled = false;
-            }
-
-            if (filterVal) {
-                table.setFilter(filter,typeVal, valueEl.value);
-            }
+            table.setFilter(filterVal, typeVal, valueEl.value);
         }
 
         //Update filters on value change
@@ -108,7 +100,7 @@ selectElement.addEventListener("change", (event) => {
         //Clear filters on "Clear Filters" button click
         document.getElementById("filter-clear").addEventListener("click", function() {
             fieldEl.value = "";
-            typeEl.value = "=";
+            typeEl.value = ">";
             valueEl.value = "";
 
             table.clearFilter();
@@ -117,6 +109,7 @@ selectElement.addEventListener("change", (event) => {
     })
    
 });
+
 //custom header filter
 var dateFilterEditor = function(cell, onRendered, success, cancel, editorParams){
 

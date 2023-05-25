@@ -24,11 +24,17 @@
 
 <body>
   <input id="dataset-url" name="url" value=""/>
+  <button id="dataset-url-submit">Fetch dataset</button>
+
   <br/>
   <div>
     <select id="filter-field">
-      <option></option>
+      <option value="">No filter</option>
       <option value="amount">Amount</option>
+      <option value="memberTtr">Member reading time</option>
+      <option value="internalReferrerViews">Internal views</option>
+      <option value="views">Views</option>
+      <option value="external_views">External views</option>
     </select>
   
     <select id="filter-type">
