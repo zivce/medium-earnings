@@ -27,7 +27,10 @@
   <button id="dataset-url-submit">Fetch dataset</button>
 
   <br/>
+  <br/>
+
   <div>
+    <strong>Filter by field</strong>
     <select id="filter-field">
       <option value="">No filter</option>
       <option value="amount">Amount</option>
@@ -39,10 +42,10 @@
   
     <select id="filter-type">
       <option value="=">=</option>
-      <option value="<"><</option>
-      <option value="<="><=</option>
-      <option value=">">></option>
-      <option value=">=">>=</option>
+      <option value="&lt;">&lt;</option>
+      <option value="&lt;=">&lt;=</option>
+      <option value=">">&gt;</option>
+      <option value=">=">&gt;=</option>
       <option value="!=">!=</option>
     </select>
   
@@ -50,6 +53,19 @@
   
     <button id="filter-clear">Clear Filter</button>
   </div>
+  
+  <br/>
+  
+  <div>
+    <strong>Group by certain field</strong>
+    <select id="group-field">
+      <option value="postId">Post</option>
+      <option value="periodStartedAt">Date</option>
+    </select>
+    <p>After selecting the field re-fetch dataset</p>
+  </div>
+  
+  <br/>
 
   <div id="example-table"></div>
   

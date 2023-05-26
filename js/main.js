@@ -12,7 +12,7 @@ selectElement.addEventListener("click", (event) => {
         layout:"fitDataTable",
         groupToggleElement:"header",
         groupStartOpen:true,
-        groupBy: "periodStartedAt",
+        groupBy: document.querySelector("#group-field").value,
         initialSort:[
             {column:"periodStartedAt", dir:"desc"}, //sort by this first
         ],
@@ -23,8 +23,12 @@ selectElement.addEventListener("click", (event) => {
                     totalEarnings += item.amount;
                 }
             });
-    
-            return formatDate(new Date(Number(value))) + ` - $${parseFloat(totalEarnings.toPrecision(3)).toFixed(2)}`;
+
+            if(document.querySelector("#group-field").value == 'postId') {
+                return data[0].title + ` - $${parseFloat(totalEarnings.toPrecision(3)).toFixed(2)}`;
+            } else {
+                return formatDate(new Date(Number(value))) + ` - $${parseFloat(totalEarnings.toPrecision(3)).toFixed(2)}`;
+            }                
         },
         columns: [
             {title:"Date", width:200, field:"periodStartedAt", hozAlign:"center", sorter:"number", formatter: function (cell, formatterParams, onRendered) {
