@@ -43,7 +43,12 @@ selectElement.addEventListener("click", (event) => {
             {title:"Link", field:"link",  formatter: function (cell, formatterParams, onRendered) {
                 return `<a class="tableLink" href="${ cell.getValue()}" target="_blank" rel="noopener noreferrer" title="Medium stats page">Go to stats</a>`;
             },},
-            {title:"Views", field:"views", topCalc: "sum"},
+            {title:"readersThatReadCount", field:"readersThatReadCount", topCalc: "sum"},
+            {title:"readersThatViewedCount", field:"readersThatViewedCount", topCalc: "sum"},
+            {title:"readersThatClappedCount", field:"readersThatClappedCount", topCalc: "sum"},
+            {title:"readersThatRepliedCount", field:"readersThatRepliedCount", topCalc: "sum"},
+            {title:"readersThatHighlightedCount", field:"readersThatHighlightedCount", topCalc: "sum"},
+            {title:"readersThatInitiallyFollowedAuthorFromThisPostCount", field:"readersThatInitiallyFollowedAuthorFromThisPostCount", topCalc: "sum"},
             { title:"External views", sorter:"number", field:"external_views",topCalc: "sum", align: "right", mutator:function(value, data) {
                     return data.views - data.internalReferrerViews;
                 } 
